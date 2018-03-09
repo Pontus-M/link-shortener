@@ -9,9 +9,7 @@ let vue = new Vue({
   },
   methods: {
     setup() {
-      console.log('getting started!', window.localStorage)
       if (window.localStorage.latestLinks) {
-        console.log('Latest links found!')
         this.latestLinks = JSON.parse(localStorage.latestLinks)
       }
     },
@@ -21,9 +19,8 @@ let vue = new Vue({
       }
     },
     generateLink() {
-      console.log('Generating link!', this.input)
 
-      this.input = this.input.replace(/https?:\/\//, '')
+      // this.input = this.input.replace(/https?:\/\//, '')
 
       fetch('http://localhost:1337/generate', {
         method: 'POST',
@@ -33,7 +30,7 @@ let vue = new Vue({
         }
       }).then(res => res.json())
         .catch(err => console.log('response error', err))
-        .then(res => vue.gotNewLink(JSON.parse(res).tiny))
+        .then(res => this.gotNewLink(JSON.parse(res).tiny))
     },
     gotNewLink(url) {
       this.latestURL = serverURL + url
@@ -43,7 +40,6 @@ let vue = new Vue({
       this.latestLinks.unshift(this.latestURL)
 
       window.localStorage.latestLinks = JSON.stringify(this.latestLinks)
-      console.log('Storage!', window.localStorage)
     }
   }
 })

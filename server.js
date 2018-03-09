@@ -17,18 +17,25 @@ app.use(favicon(path.join(__dirname, 'favicon.ico')))
 app.use('/', express.static(path.join(__dirname, 'public')))
 
 app.get('/:tinyurl', function(req, res) {
-  console.log('redirect me!', req.params.tinyurl, links[req.params.tinyurl])
-  res.redirect(301, 'https://' + links[req.params.tinyurl])
-  // res.redirect(301, 'https://google.com')
+  let tiny = req.params.tinyurl
+  let url = links[tiny]
+  console.log('Redir', tiny, url)
+  res.redirect(301, url)
 })
 
 app.use(bodyParser.json())
 
 app.post('/generate', function(req, res) {
-  console.log('generate tiny!', req.body.url)
   let tiny = getNextTinyURL()
-  links[tiny] = req.body.url
 
+  let url = req.body.url
+
+  if(!/^https?:\/\//.test(url)) {
+    url = 'https://' + url
+  }
+
+  links[tiny] = url
+  console.log('Added', tiny, url, links[tiny])
   res.json(JSON.stringify({
     tiny: tiny
   }))
@@ -49,3 +56,10 @@ function getNextTinyURL() {
     return str
   }
 }
+
+/* TODO
+
+validation? check for valid link? contains . ?
+tests?
+
+ */
