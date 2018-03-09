@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta charset="UTF-8">
+  <title>Pontus Link Shortener</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+
+  <div id="title" class="centerContentVertically">
+    <h1>Pontus Link Shortener</h1>
+  </div>
+
+  <div id="content">
+
+    <div id="input" class="centerContentVertically">
+      <input type="text" placeholder="Enter URL" v-model="input" @keydown="handleKeyDown">
+    </div>
+
+    <div id="output" class="centerContentVertically">
+      <h2>
+        <span v-if="!latestURL">Your link will appear here.</span>
+        <a v-bind:href="latestURL">{{ latestURL }}</a>
+      </h2>
+    </div>
+
+    <div id="history" class="centerContentVertically">
+      <h4>Your latest links:</h4>
+      <a v-for="url of latestLinks" v-bind:href="url"> {{ url }} </a>
+    </div>
+
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/vue"></script>
+  <script src="script.js"></script>
+</body>
+
+</html>

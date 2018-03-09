@@ -1,0 +1,51 @@
+* {
+  margin: 0 auto;
+  padding: 0;
+  font-family: Georgia, 'Times New Roman', Times, serif;
+}
+
+html, body {
+  height: 100%;
+}
+
+#title {
+  height: 15%;
+  text-align: center;
+
+  background: linear-gradient(#555 ,#FFF);
+
+  user-select: none;
+}
+
+#content {
+  height: 85%;
+  width: 80%;
+}
+
+#output {
+  /* padding-top: 5%; */
+  height: 20%;
+}
+
+#input {
+  /* padding-top: 5%; */
+  height: 20%;
+}
+
+#input > input {
+  width: 50%;
+  padding-top: 1%;
+  padding-bottom: 1%;
+  font-size: x-large;
+  text-align: center;
+}
+
+.centerContentVertically {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+#history {
+  padding-bottom: 5%;
+}
