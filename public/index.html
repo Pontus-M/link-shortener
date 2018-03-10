@@ -18,8 +18,9 @@
     <div id="input" class="centerContentVertically">
       <input type="text" placeholder="Enter URL" v-model="input" @keydown="handleKeyDown">
     </div>
-
+    
     <div id="output" class="centerContentVertically">
+      <h3 id="error" v-show="error">Invalid input.</h3>
       <h2>
         <span v-if="!latestURL">Your link will appear here.</span>
         <a v-bind:href="latestURL">{{ latestURL }}</a>

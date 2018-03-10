@@ -12,6 +12,9 @@ const app = express()
 let counter = base62.decode('tret37')
 let links = {}
 
+// input url has to contain a dot with any character before and after
+let validURLreg = /.\../
+
 app.use(favicon(path.join(__dirname, 'favicon.ico')))
 
 app.use('/', express.static(path.join(__dirname, 'public')))
@@ -29,6 +32,12 @@ app.post('/generate', function(req, res) {
   let tiny = getNextTinyURL()
 
   let url = req.body.url
+
+  // if url is missing or invalid reject request
+  if(!url || !validURLreg.test(url)) {
+    res.status(400).end()
+    return
+  }
 
   if(!/^https?:\/\//.test(url)) {
     url = 'https://' + url
@@ -59,7 +68,8 @@ function getNextTinyURL() {
 
 /* TODO
 
-validation? check for valid link? contains . ?
+input validation should also check for invalid URL characters
+
 tests?
 
  */
