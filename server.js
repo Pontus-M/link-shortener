@@ -72,4 +72,10 @@ input validation should also check for invalid URL characters
 
 tests?
 
+test getNextTinyURL
+  returns
+    not null
+    is string
+    is base62
+
  */
