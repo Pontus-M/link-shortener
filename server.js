@@ -1,11 +1,9 @@
-const PORT = 1337
-
 const path = require('path')
 const express = require('express')
-const favicon = require('serve-favicon')
 const bodyParser = require('body-parser')
-
 const base62 = require('base62')
+
+const PORT = 1337
 
 const app = express()
 
@@ -15,9 +13,7 @@ let links = {}
 // input url has to contain a dot with any character before and after
 let validURLreg = /.\../
 
-app.use(favicon(path.join(__dirname, 'favicon.ico')))
-
-app.use('/', express.static(path.join(__dirname, 'public')))
+app.use('/', express.static(path.join(__dirname, 'client/build')))
 
 app.get('/:tinyurl', function(req, res) {
   let tiny = req.params.tinyurl
