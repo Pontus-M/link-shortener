@@ -1,77 +1,74 @@
-const path = require('path')
-const express = require('express')
-const bodyParser = require('body-parser')
-const base62 = require('base62')
+const path = require("path");
+const express = require("express");
+const bodyParser = require("body-parser");
+const base62 = require("base62");
 
-const PORT = 1337
+const { validateUrl, makeTinyUrl } = require("./utils");
 
-const app = express()
+const STATUS_CODES = {
+  REDIRECT: 302,
+  BAD_REQUEST: 400
+};
 
-let counter = base62.decode('tret37')
-let links = {}
+const PORT = 1337;
 
-// input url has to contain a dot with any character before and after
-let validURLreg = /.\../
+const app = express();
 
-app.use('/', express.static(path.join(__dirname, 'client/build')))
+// let counter = 0;
+let counter = base62.decode("001337");
+const links = {};
 
-app.get('/:tinyurl', function(req, res) {
-  let tiny = req.params.tinyurl
-  let url = links[tiny]
-  console.log('Redir', tiny, url)
-  res.redirect(301, url)
-})
+app.use(bodyParser.json());
+app.use(express.static(path.join(__dirname, "client/build")));
 
-app.use(bodyParser.json())
-
-app.post('/generate', function(req, res) {
-  let tiny = getNextTinyURL()
-
-  let url = req.body.url
-
-  // if url is missing or invalid reject request
-  if(!url || !validURLreg.test(url)) {
-    res.status(400).end()
-    return
-  }
-
-  if(!/^https?:\/\//.test(url)) {
-    url = 'https://' + url
-  }
-
-  links[tiny] = url
-  console.log('Added', tiny, url, links[tiny])
-  res.json(JSON.stringify({
-    tiny: tiny
-  }))
-})
+app.get("/:tinyurl", redirect);
+app.post("/generate", generate);
 
 app.listen(PORT, function() {
-  console.log('Pontus Link Shortener started on localhost:' + PORT, 'at', new Date().toLocaleTimeString())
-})
+  console.log(
+    "Pontus Link Shortener started on localhost:" + PORT,
+    "at",
+    new Date().toLocaleTimeString()
+  );
+});
 
-function getNextTinyURL() {
+function redirect(req, res) {
+  const tiny = req.params.tinyurl;
+  let url = links[tiny];
 
-  return zeroPad(base62.encode(counter++))
-
-  function zeroPad(str) {
-    while(str.length < 6) {
-      str = '0' + str
-    }
-    return str
+  if (!url) {
+    return res.redirect(STATUS_CODES.REDIRECT, "/");
   }
+
+  return res.redirect(STATUS_CODES.REDIRECT, url);
 }
 
-/* TODO
+function generate(req, res) {
+  let url = req.body.url;
 
-input validation should also check for invalid URL characters
+  if (!url) {
+    console.log("Error, url missing");
+    return res.status(STATUS_CODES.BAD_REQUEST).send("Error, url missing");
+  }
 
-tests?
+  const isValidUrl = validateUrl(url);
+  if (!isValidUrl) {
+    console.log("Error, url format invalid");
+    return res
+      .status(STATUS_CODES.BAD_REQUEST)
+      .send("Error, url format invalid");
+  }
 
-test getNextTinyURL
-  returns
-    not null
-    is string
-    is base62
+  // prepend https if protocol is missing
+  if (!/^https?:\/\//.test(url)) {
+    url = "https://" + url;
+  }
 
- */
+  const tiny = makeTinyUrl(counter++);
+  links[tiny] = url;
+  res.json(
+    JSON.stringify({
+      tiny: tiny
+    })
+  );
+}
